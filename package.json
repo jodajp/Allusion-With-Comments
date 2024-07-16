@@ -72,14 +72,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/allusion-app/Allusion.git"
+    "url": "git+https://github.com/jodajp/Allusion-With-Comments.git"
   },
   "author": "Allusion-App",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/allusion-app/Allusion/issues"
+    "url": "https://github.com/jodajp/Allusion-With-Comments/issues"
   },
-  "homepage": "https://github.com/allusion-app/Allusion#readme",
+  "homepage": "https://github.com/jodajp/Allusion-With-Comments#readme",
   "devDependencies": {
     "@svgr/webpack": "^6.5.1",
     "@types/chrome": "^0.0.195",
