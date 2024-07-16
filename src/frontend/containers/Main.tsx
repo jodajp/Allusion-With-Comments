@@ -41,7 +41,8 @@ const Main = () => {
   }, []);
 
   const handleShortcuts = useAction((e: React.KeyboardEvent) => {
-    if ((e.target as HTMLElement).matches('input')) {
+    // Shortcuts to work on textarea and stuff
+    if ((e.target as HTMLElement).matches('input, textarea, #comment')) {
       return;
     }
     const combo = getKeyCombo(e.nativeEvent);

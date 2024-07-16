@@ -54,6 +54,9 @@ export class ClientFile {
   readonly dateLastIndexed: Date;
   readonly name: string;
   readonly extension: IMG_EXTENSIONS_TYPE;
+
+  @observable comments: string;
+
   /** Same as "name", but without extension */
   readonly filename: string;
 
@@ -87,6 +90,9 @@ export class ClientFile {
 
     this.tags = observable(this.store.getTags(fileProps.tags));
 
+    /** Comments */
+    this.comments = fileProps.comments;
+
     // observe all changes to observable fields
     this.saveHandler = reaction(
       // We need to explicitly define which values this reaction should react to
@@ -102,6 +108,10 @@ export class ClientFile {
     );
 
     makeObservable(this);
+  }
+
+  @action.bound setComment(comment: string): void {
+    this.comments = comment;
   }
 
   @action.bound setThumbnailPath(thumbnailPath: string): void {
@@ -165,6 +175,7 @@ export class ClientFile {
       dateLastIndexed: this.dateLastIndexed,
       name: this.name,
       extension: this.extension,
+      comments: this.comments,
     };
   }
 

@@ -87,3 +87,28 @@
     }
   }
 }
+
+
+.input-comoment {
+  display: flex;
+  align-items: center;
+
+  height: 200px;
+  width: 100%;
+
+  margin-right: 0.25rem;
+  padding: 0 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8125rem;
+  border: 0.0625rem solid var(--border-color);
+  resize: vertical;
+  margin-bottom: 15px;
+  background: var(--input-color);
+
+  color: white;
+
+  &:hover {
+    background: var(--input-color-hover);
+  }
+}

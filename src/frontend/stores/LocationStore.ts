@@ -565,6 +565,7 @@ export async function pathToIFile(
     dateModified: now,
     dateLastIndexed: now,
     ...(await getMetaData(stats, imageLoader)),
+    comments: '',
   };
 }
 

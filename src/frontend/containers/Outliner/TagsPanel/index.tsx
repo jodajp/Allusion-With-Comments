@@ -71,7 +71,7 @@ const TagsPanel = (props: Partial<MultiSplitPaneProps>) => {
   const { uiStore } = useStore();
 
   const handleShortcuts = useAction((e: React.KeyboardEvent) => {
-    if ((e.target as HTMLElement).matches('input')) {
+    if ((e.target as HTMLElement).matches('input, textarea, #comment')) {
       return;
     }
     const combo = getKeyCombo(e.nativeEvent);

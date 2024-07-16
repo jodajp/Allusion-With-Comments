@@ -29,6 +29,9 @@ export type FileDTO = {
   height: number;
   /** Date when this file was created (from the OS, not related to Allusion) */
   dateCreated: Date;
+
+  /** Comments that can be added to each specific image*/
+  comments: string;
 };
 
 export const IMG_EXTENSIONS = [
@@ -54,4 +57,4 @@ export const IMG_EXTENSIONS = [
   // 'heic', // not supported by Sharp out of the box https://github.com/lovell/sharp/issues/2871
   // TODO: 'blend', raw, etc.?
 ] as const;
-export type IMG_EXTENSIONS_TYPE = typeof IMG_EXTENSIONS[number];
+export type IMG_EXTENSIONS_TYPE = (typeof IMG_EXTENSIONS)[number];

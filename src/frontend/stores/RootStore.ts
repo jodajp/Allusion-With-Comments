@@ -4,6 +4,7 @@ import { DataStorage } from 'src/api/data-storage';
 import { DataBackup } from 'src/api/data-backup';
 
 import FileStore from './FileStore';
+import CommentStore from './CommentStore';
 import TagStore from './TagStore';
 import UiStore from './UiStore';
 import LocationStore from './LocationStore';
@@ -33,6 +34,7 @@ class RootStore {
   readonly #backup: DataBackup;
 
   readonly tagStore: TagStore;
+  readonly commentStore: CommentStore;
   readonly fileStore: FileStore;
   readonly locationStore: LocationStore;
   readonly uiStore: UiStore;
@@ -47,6 +49,7 @@ class RootStore {
     formatWindowTitle: (FileStore: FileStore, uiStore: UiStore) => string,
   ) {
     this.tagStore = new TagStore(backend, this);
+    this.commentStore = new CommentStore(backend, this);
     this.fileStore = new FileStore(backend, this);
     this.locationStore = new LocationStore(backend, this);
     this.uiStore = new UiStore(this);

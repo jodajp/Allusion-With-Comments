@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 
 import { useStore } from '../../contexts/StoreContext';
 import FileTags from '../../components/FileTag';
+import CommentField from '../../components/CommentField';
 import ImageInfo from '../../components/ImageInfo';
 import { IconButton, IconSet } from 'widgets';
 import { shell } from 'electron';
@@ -20,6 +21,9 @@ const Inspector = observer(() => {
   }
 
   const first = fileStore.fileList[uiStore.firstItem];
+
+  console.log(first);
+
   const path = first.absolutePath;
 
   return (
@@ -47,6 +51,16 @@ const Inspector = observer(() => {
             <h2>Tags</h2>
           </header>
           <FileTags file={first} />
+        </section>
+      )}
+
+      {/* Modifying state in preview window is not supported (not in sync updated in main window) */}
+      {!IS_PREVIEW_WINDOW && (
+        <section>
+          <header>
+            <h2>Comments</h2>
+          </header>
+          <CommentField file={first} />
         </section>
       )}
     </aside>

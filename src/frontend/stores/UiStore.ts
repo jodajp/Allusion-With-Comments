@@ -703,7 +703,8 @@ class UiStore {
   }
 
   @action.bound processGlobalShortCuts(e: KeyboardEvent): void {
-    if ((e.target as HTMLElement | null)?.matches('input')) {
+    // Shortcuts to work on textarea and stuff
+    if ((e.target as HTMLElement | null)?.matches('input, textarea, #comment')) {
       return;
     }
     const combo = getKeyCombo(e);
