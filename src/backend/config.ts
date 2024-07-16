@@ -99,17 +99,7 @@ const dbConfig: DBVersioningConfig[] = [
   {
     // Version 9, 15-7-24: Added comments to images
     version: 9,
-    collections: [
-      {
-        name: 'files',
-        schema:
-          '++id, ino, locationId, *tags, relativePath, &absolutePath, name, extension, size, width, height, dateAdded, dateModified, dateCreated, comments',
-      },
-      {
-        name: 'comments',
-        schema: '++id, text',
-      },
-    ],
+    collections: [],
     upgrade: (tx: Transaction): void => {
       tx.table('files')
         .toCollection()

@@ -21,9 +21,6 @@ const Inspector = observer(() => {
   }
 
   const first = fileStore.fileList[uiStore.firstItem];
-
-  console.log(first);
-
   const path = first.absolutePath;
 
   return (
