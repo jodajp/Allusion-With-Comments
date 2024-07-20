@@ -92,23 +92,6 @@ const dbConfig: DBVersioningConfig[] = [
           } catch (e) {
             console.warn(`Could not get ino for ${file.absolutePath}`);
           }
-          return file;
-        });
-    },
-  },
-  {
-    // Version 9, 15-7-24: Added comments to images
-    version: 9,
-    collections: [],
-    upgrade: (tx: Transaction): void => {
-      tx.table('files')
-        .toCollection()
-        .modify((file: FileDTO) => {
-          try {
-            file.comments = '';
-          } catch (e) {
-            console.warn(`Could not set the comment as empty for ${file.absolutePath}`);
-          }
 
           return file;
         });

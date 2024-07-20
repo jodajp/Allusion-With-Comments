@@ -7,13 +7,19 @@ interface IFileTagProp {
   file: ClientFile;
 }
 
+const stopPropagation = (e: React.KeyboardEvent<HTMLTextAreaElement>) => e.stopPropagation();
+
 const CommentField = observer(({ file }: IFileTagProp) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     // Set initial value when textareaRef is defined
     if (textareaRef.current) {
-      textareaRef.current.value = file.comments;
+      if (typeof file.comments != 'undefined' && file.comments != 'undefined') {
+        textareaRef.current.value = file.comments;
+      } else {
+        textareaRef.current.value = '';
+      }
     }
   }, [file.comments]); // Update when file.comments changes
 
@@ -31,6 +37,7 @@ const CommentField = observer(({ file }: IFileTagProp) => {
       id="comment"
       ref={textareaRef}
       onChange={handleChange}
+      onKeyDown={stopPropagation}
     ></textarea>
   );
 });
