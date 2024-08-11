@@ -68,6 +68,14 @@ export const KeySelector = forwardRef(function KeySelector(
       <option key="dateAdded" value="dateAdded">
         Date Added
       </option>
+
+      <option key="comments" value="comments">
+        Comments
+      </option>
+
+      <option key="Creator" value="Creator">
+        Creator
+      </option>
     </select>
   );
 });
@@ -111,7 +119,10 @@ export const ValueInput = ({ labelledby, keyValue, value, dispatch }: FieldInput
     return <NumberInput labelledby={labelledby} value={value as number} dispatch={dispatch} />;
   } else if (keyValue === 'dateAdded') {
     return <DateAddedInput labelledby={labelledby} value={value as Date} dispatch={dispatch} />;
+  } else if (keyValue === 'comments' || keyValue == 'Creator') {
+    return <PathInput labelledby={labelledby} value={value as string} dispatch={dispatch} />;
   }
+
   return <p>This should never happen.</p>;
 };
 
@@ -297,7 +308,7 @@ function getOperatorOptions(key: Key) {
     return NumberOperators.map((op) => toOperatorOption(op, NumberOperatorSymbols));
   } else if (key === 'extension') {
     return BinaryOperators.map((op) => toOperatorOption(op));
-  } else if (key === 'name' || key === 'absolutePath') {
+  } else if (key === 'name' || key === 'absolutePath' || key == 'comments' || key == 'Creator') {
     return StringOperators.map((op) => toOperatorOption(op, StringOperatorLabels));
   } else if (key === 'tags') {
     return TagOperators.map((op) => toOperatorOption(op));

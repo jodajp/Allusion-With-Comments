@@ -15,6 +15,8 @@ import { ClientStringSearchCriteria, ClientTagSearchCriteria } from '../entities
 import { ClientTag } from '../entities/Tag';
 import RootStore from './RootStore';
 
+import exiftool from 'node-exiftool';
+
 export const FILE_STORAGE_KEY = 'Allusion_File';
 
 /** These fields are stored and recovered when the application opens up */
@@ -422,11 +424,16 @@ class FileStore {
     const criterias = uiStore.searchCriteriaList.map((c) => c.toCondition(this.rootStore));
     try {
       const fetchedFiles = await this.backend.searchFiles(
-        criterias as [ConditionDTO<FileDTO>, ...ConditionDTO<FileDTO>[]],
+        criterias as [
+          ConditionDTO<FileDTO | exiftool.IMetadata>,
+          ...ConditionDTO<FileDTO | exiftool.IMetadata>[],
+        ],
         this.orderBy,
         this.orderDirection,
         uiStore.searchMatchAny,
       );
+
+      console.log(criterias);
       this.setContentQuery();
       return this.updateFromBackend(fetchedFiles);
     } catch (e) {

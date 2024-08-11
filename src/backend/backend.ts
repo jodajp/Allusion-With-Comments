@@ -337,6 +337,29 @@ async function filter<T>(
   // for (const crit of otherCrits) {
   //   table = table.and(this._filterLambda(crit));
   // }
+
+  console.log(criterias);
+
+  let found;
+
+  for (let i = 0; i < criterias.length; i++) {
+    const element = criterias[i].key;
+
+    console.log(element);
+
+    // If true then we working with custom added metadata search
+    // As metadata stuff starts with UPPERCASE character
+    if (/^\p{Lu}/u.test(element)) {
+      found = i;
+    }
+  }
+
+  console.log(found);
+
+  if (found == 0 || found) {
+    console.log('Procurar metada');
+  }
+
   return table;
 }
 
