@@ -73,8 +73,16 @@ export const KeySelector = forwardRef(function KeySelector(
         Comments
       </option>
 
-      <option key="Creator" value="Creator">
+      <option key="creator" value="creator">
         Creator
+      </option>
+
+      <option key="creatorURL" value="creatorURL">
+        Creator URL
+      </option>
+
+      <option key="description" value="description">
+        Description
       </option>
     </select>
   );
@@ -109,7 +117,14 @@ export const OperatorSelector = ({
 };
 
 export const ValueInput = ({ labelledby, keyValue, value, dispatch }: FieldInput<Value>) => {
-  if (keyValue === 'name' || keyValue === 'absolutePath') {
+  if (
+    keyValue === 'name' ||
+    keyValue === 'absolutePath' ||
+    keyValue === 'comments' ||
+    keyValue === 'creator' ||
+    keyValue === 'creatorURL' ||
+    keyValue === 'description'
+  ) {
     return <PathInput labelledby={labelledby} value={value as string} dispatch={dispatch} />;
   } else if (keyValue === 'tags') {
     return <TagInput labelledby={labelledby} value={value as TagValue} dispatch={dispatch} />;
@@ -119,8 +134,6 @@ export const ValueInput = ({ labelledby, keyValue, value, dispatch }: FieldInput
     return <NumberInput labelledby={labelledby} value={value as number} dispatch={dispatch} />;
   } else if (keyValue === 'dateAdded') {
     return <DateAddedInput labelledby={labelledby} value={value as Date} dispatch={dispatch} />;
-  } else if (keyValue === 'comments' || keyValue == 'Creator') {
-    return <PathInput labelledby={labelledby} value={value as string} dispatch={dispatch} />;
   }
 
   return <p>This should never happen.</p>;
@@ -308,7 +321,14 @@ function getOperatorOptions(key: Key) {
     return NumberOperators.map((op) => toOperatorOption(op, NumberOperatorSymbols));
   } else if (key === 'extension') {
     return BinaryOperators.map((op) => toOperatorOption(op));
-  } else if (key === 'name' || key === 'absolutePath' || key == 'comments' || key == 'Creator') {
+  } else if (
+    key === 'name' ||
+    key === 'absolutePath' ||
+    key === 'comments' ||
+    key === 'creator' ||
+    key === 'creatorURL' ||
+    key === 'description'
+  ) {
     return StringOperators.map((op) => toOperatorOption(op, StringOperatorLabels));
   } else if (key === 'tags') {
     return TagOperators.map((op) => toOperatorOption(op));

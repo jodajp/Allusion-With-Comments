@@ -2,8 +2,6 @@ import { ID } from './id';
 import { FileDTO } from './file';
 import { NumberOperatorType, StringOperatorType } from './data-storage-search';
 
-import exiftool from 'node-exiftool';
-
 export const BinaryOperators = ['equals', 'notEqual'] as const;
 export type BinaryOperatorType = (typeof BinaryOperators)[number];
 
@@ -23,7 +21,7 @@ export type OperatorType =
 
 // FFR: Boolean keys are not supported in IndexedDB/Dexie - must store booleans as 0/1
 export interface IBaseSearchCriteria {
-  key: keyof FileDTO | keyof exiftool.IMetadata;
+  key: keyof FileDTO;
   valueType: 'number' | 'date' | 'string' | 'array';
   readonly operator: OperatorType;
 }

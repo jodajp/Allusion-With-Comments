@@ -6,8 +6,6 @@ import { ID } from './id';
 import { LocationDTO } from './location';
 import { TagDTO } from './tag';
 
-import exiftool from 'node-exiftool';
-
 /**
  * The user generated persisted data edited or viewed by one or multiple actors (users, multiple devices etc.).
  *
@@ -25,12 +23,7 @@ export interface DataStorage {
   fetchLocations(): Promise<LocationDTO[]>;
   fetchSearches(): Promise<FileSearchDTO[]>;
   searchFiles(
-    criteria:
-      | ConditionDTO<FileDTO | exiftool.IMetadata>
-      | [
-          ConditionDTO<FileDTO | exiftool.IMetadata>,
-          ...ConditionDTO<FileDTO | exiftool.IMetadata>[],
-        ],
+    criteria: ConditionDTO<FileDTO> | [ConditionDTO<FileDTO>, ...ConditionDTO<FileDTO>[]],
     order: OrderBy<FileDTO>,
     fileOrder: OrderDirection,
     matchAny?: boolean,

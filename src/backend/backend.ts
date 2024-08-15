@@ -282,6 +282,8 @@ export default class Backend implements DataStorage {
 
 type SearchConjunction = 'and' | 'or';
 
+const exceptionSearch = ['creator', 'creatorURL', 'description'];
+
 async function filter<T>(
   collection: Dexie.Table<T, ID>,
   criterias: [ConditionDTO<T>, ...ConditionDTO<T>[]],
@@ -298,6 +300,12 @@ async function filter<T>(
     let allWheres = true;
     let table: Dexie.Collection<T, string> | undefined = undefined;
     for (const crit of criterias) {
+      // Handle exceptions separately since it's not indexed for db compatibility
+      if (exceptionSearch.includes(crit.key as string)) {
+        allWheres = false;
+        break;
+      }
+
       const where: WhereClause<T, string> = !table
         ? collection.where(crit.key)
         : table.or(crit.key);
@@ -325,11 +333,32 @@ async function filter<T>(
   // Since not all operators we need are supported by "where" filters, _filterWhere can also return a lambda.
   const [firstCrit, ...otherCrits] = criterias;
 
-  const where = collection.where(firstCrit.key);
-  const whereOrFilter = filterWhere(where, firstCrit);
-  let table =
-    typeof whereOrFilter !== 'function' ? whereOrFilter : collection.filter(whereOrFilter);
+  let table: Dexie.Collection<T, string>;
 
+  // Check if the first criterion is in exceptions
+  if (exceptionSearch.includes(firstCrit.key as string)) {
+    table = collection.filter(filterString(firstCrit as StringConditionDTO<T>));
+  } else {
+    const where = collection.where(firstCrit.key);
+    const whereOrFilter = filterWhere(where, firstCrit);
+    table = typeof whereOrFilter !== 'function' ? whereOrFilter : collection.filter(whereOrFilter);
+  }
+
+  // Process the remaining criteria
+  if (otherCrits.length) {
+    table = table.and((item) => {
+      return otherCrits.every((crit) => {
+        if (exceptionSearch.includes(crit.key as string)) {
+          // Handle exceptions using filterString
+          return filterString(crit as StringConditionDTO<T>)(item);
+        } else {
+          return filterLambda(crit)(item);
+        }
+      });
+    });
+  }
+
+  /* OLD CODE
   // Then just chain a loop of and() calls. A .every() feels more efficient than chaining table.and() calls
   if (otherCrits.length) {
     table = table.and((item) => otherCrits.every((crit) => filterLambda(crit)(item)));
@@ -338,28 +367,7 @@ async function filter<T>(
   //   table = table.and(this._filterLambda(crit));
   // }
 
-  console.log(criterias);
-
-  let found;
-
-  for (let i = 0; i < criterias.length; i++) {
-    const element = criterias[i].key;
-
-    console.log(element);
-
-    // If true then we working with custom added metadata search
-    // As metadata stuff starts with UPPERCASE character
-    if (/^\p{Lu}/u.test(element)) {
-      found = i;
-    }
-  }
-
-  console.log(found);
-
-  if (found == 0 || found) {
-    console.log('Procurar metada');
-  }
-
+  */
   return table;
 }
 
@@ -479,6 +487,35 @@ function filterStringLambda<T>(crit: StringConditionDTO<T>): (t: any) => boolean
       console.log('String operator not allowed:', crit.operator);
       return () => false;
   }
+}
+
+function filterString<T>(crit: StringConditionDTO<T>): (item: any) => boolean {
+  const { key, value: critValue } = crit;
+  const valLow = critValue.toLowerCase();
+
+  return (item: any) => {
+    // Get the value from the item, default to an empty string if undefined or null
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const itemValue = (item[key] as string)?.toLowerCase() || '';
+
+    switch (crit.operator) {
+      case 'equals':
+        return itemValue === valLow;
+      case 'notEqual':
+        return itemValue !== valLow;
+      case 'contains':
+        return itemValue.includes(valLow);
+      case 'notContains':
+        return !itemValue.includes(valLow);
+      case 'startsWith':
+        return itemValue.startsWith(valLow);
+      case 'notStartsWith':
+        return !itemValue.startsWith(valLow);
+      default:
+        console.log('String operator not allowed:', crit.operator);
+        return false;
+    }
+  };
 }
 
 function filterNumberWhere<T>(

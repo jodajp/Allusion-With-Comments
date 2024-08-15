@@ -12,8 +12,6 @@ import {
 } from '../../entities/SearchCriteria';
 import TagStore from '../../stores/TagStore';
 
-import exiftool from 'node-exiftool';
-
 export function generateCriteriaId() {
   return generateWidgetId('__criteria');
 }
@@ -26,7 +24,9 @@ export type Criteria =
   | Field<'width' | 'height', NumberOperatorType, number>
   | Field<'dateAdded', NumberOperatorType, Date>
   | Field<'comments', StringOperatorType, string>
-  | Field<'Creator', StringOperatorType, string>;
+  | Field<'creator', StringOperatorType, string>
+  | Field<'creatorURL', StringOperatorType, string>
+  | Field<'description', StringOperatorType, string>;
 
 interface Field<K extends Key, O extends Operator, V extends Value> {
   key: K;
@@ -34,7 +34,7 @@ interface Field<K extends Key, O extends Operator, V extends Value> {
   value: V;
 }
 
-type FileKeys = keyof Pick<
+export type Key = keyof Pick<
   FileDTO,
   | 'name'
   | 'absolutePath'
@@ -45,33 +45,24 @@ type FileKeys = keyof Pick<
   | 'height'
   | 'dateAdded'
   | 'comments'
+  | 'creator'
+  | 'creatorURL'
+  | 'description'
 >;
-
-type ExiftoolKeys = keyof Pick<exiftool.IMetadata, 'Creator'>;
-
-export type Key = FileKeys | ExiftoolKeys;
-
-/*export type Key = keyof Pick<
-  FileDTO,
-  | 'name'
-  | 'absolutePath'
-  | 'tags'
-  | 'extension'
-  | 'size'
-  | 'width'
-  | 'height'
-  | 'dateAdded'
-  | 'comments'
-  exiftool,
-  'creator'
->;*/
 
 export type Operator = OperatorType;
 export type Value = string | number | Date | TagValue;
 export type TagValue = ID | undefined;
 
 export function defaultQuery(key: Key): Criteria {
-  if (key === 'name' || key === 'absolutePath') {
+  if (
+    key === 'name' ||
+    key === 'absolutePath' ||
+    key === 'comments' ||
+    key === 'creator' ||
+    key === 'creatorURL' ||
+    key === 'description'
+  ) {
     return { key, operator: 'contains', value: '' };
   } else if (key === 'tags') {
     return { key, operator: 'contains', value: undefined };
@@ -87,8 +78,6 @@ export function defaultQuery(key: Key): Criteria {
       operator: 'equals',
       value: new Date(),
     };
-  } else if (key === 'comments' || key === 'Creator') {
-    return { key, operator: 'contains', value: '' };
   } else {
     return { key, operator: 'greaterThanOrEquals', value: 0 };
   }
@@ -105,7 +94,9 @@ export function fromCriteria(criteria: ClientFileSearchCriteria): [ID, Criteria]
       criteria.key === 'absolutePath' ||
       criteria.key === 'extension' ||
       criteria.key === 'comments' ||
-      criteria.key === 'Creator')
+      criteria.key === 'creator' ||
+      criteria.key === 'creatorURL' ||
+      criteria.key === 'description')
   ) {
     query.value = criteria.value;
   } else if (criteria instanceof ClientDateSearchCriteria && criteria.key === 'dateAdded') {
@@ -133,10 +124,11 @@ export function intoCriteria(query: Criteria, tagStore: TagStore): ClientFileSea
     query.key === 'name' ||
     query.key === 'absolutePath' ||
     query.key === 'extension' ||
-    query.key == 'comments' ||
-    query.key == 'Creator'
+    query.key === 'comments' ||
+    query.key === 'creator' ||
+    query.key === 'creatorURL' ||
+    query.key === 'description'
   ) {
-    console.log(query.key, query.value, query.operator);
     return new ClientStringSearchCriteria(query.key, query.value, query.operator);
   } else if (query.key === 'dateAdded') {
     return new ClientDateSearchCriteria(query.key, query.value, query.operator);

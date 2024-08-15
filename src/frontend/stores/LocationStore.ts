@@ -11,7 +11,7 @@ import { ID, generateId } from '../../api/id';
 import { LocationDTO } from '../../api/location';
 import { RendererMessenger } from '../../ipc/renderer';
 import { AppToaster } from '../components/Toaster';
-import { getMetaData, mergeMovedFile } from '../entities/File';
+import { getMetaData, mergeMovedFile, getMetaDataExtra } from '../entities/File';
 import { ClientLocation, ClientSubLocation } from '../entities/Location';
 import { ClientStringSearchCriteria } from '../entities/SearchCriteria';
 import ImageLoader from '../image/ImageLoader';
@@ -566,6 +566,7 @@ export async function pathToIFile(
     dateLastIndexed: now,
     ...(await getMetaData(stats, imageLoader)),
     comments: '',
+    ...(await getMetaDataExtra(stats, imageLoader)),
   };
 }
 

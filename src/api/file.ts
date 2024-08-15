@@ -32,6 +32,11 @@ export type FileDTO = {
 
   /** Comments that can be added to each specific image*/
   comments: string;
+
+  /** Metadata Search */
+  creator: string;
+  creatorURL: string;
+  description: string;
 };
 
 export const IMG_EXTENSIONS = [

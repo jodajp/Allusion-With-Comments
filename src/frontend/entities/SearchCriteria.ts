@@ -24,10 +24,8 @@ import {
 } from '../../api/search-criteria';
 import RootStore from '../stores/RootStore';
 
-import exiftool from 'node-exiftool';
-
 // A dictionary of labels for (some of) the keys of the type we search for
-export type SearchKeyDict = Partial<Record<keyof FileDTO | keyof exiftool.IMetadata, string>>;
+export type SearchKeyDict = Partial<Record<keyof FileDTO, string>>;
 
 export const CustomKeyDict: SearchKeyDict = {
   absolutePath: 'Path',
@@ -55,14 +53,14 @@ export const StringOperatorLabels: Record<StringOperatorType, string> = {
 };
 
 export abstract class ClientFileSearchCriteria implements IBaseSearchCriteria {
-  @observable public key: keyof FileDTO | keyof exiftool.IMetadata;
+  @observable public key: keyof FileDTO;
   @observable public valueType: 'number' | 'date' | 'string' | 'array';
   @observable public operator: OperatorType;
 
   private disposers: Lambda[] = [];
 
   constructor(
-    key: keyof FileDTO | keyof exiftool.IMetadata,
+    key: keyof FileDTO,
     valueType: 'number' | 'date' | 'string' | 'array',
     operator: OperatorType,
   ) {
@@ -117,11 +115,7 @@ export abstract class ClientFileSearchCriteria implements IBaseSearchCriteria {
 export class ClientTagSearchCriteria extends ClientFileSearchCriteria {
   @observable public value?: ID;
 
-  constructor(
-    key: keyof FileDTO | keyof exiftool.IMetadata,
-    id?: ID,
-    operator: TagOperatorType = 'containsRecursively',
-  ) {
+  constructor(key: keyof FileDTO, id?: ID, operator: TagOperatorType = 'containsRecursively') {
     super(key, 'array', operator);
     this.value = id;
     makeObservable(this);
@@ -187,11 +181,7 @@ export class ClientTagSearchCriteria extends ClientFileSearchCriteria {
 export class ClientStringSearchCriteria extends ClientFileSearchCriteria {
   @observable public value: string;
 
-  constructor(
-    key: keyof FileDTO | keyof exiftool.IMetadata,
-    value: string = '',
-    operator: StringOperatorType = 'contains',
-  ) {
+  constructor(key: keyof FileDTO, value: string = '', operator: StringOperatorType = 'contains') {
     super(key, 'string', operator);
     this.value = value;
     makeObservable(this);
@@ -228,7 +218,7 @@ export class ClientNumberSearchCriteria extends ClientFileSearchCriteria {
   @observable public value: number;
 
   constructor(
-    key: keyof FileDTO | keyof exiftool.IMetadata,
+    key: keyof FileDTO,
     value: number = 0,
     operator: NumberOperatorType = 'greaterThanOrEquals',
   ) {
@@ -267,7 +257,7 @@ export class ClientDateSearchCriteria extends ClientFileSearchCriteria {
   @observable public value: Date;
 
   constructor(
-    key: keyof FileDTO | keyof exiftool.IMetadata,
+    key: keyof FileDTO,
     value: Date = new Date(),
     operator: NumberOperatorType = 'equals',
   ) {
