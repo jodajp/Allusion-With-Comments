@@ -47,6 +47,9 @@ describe('Backend', () => {
         id: index.toString(),
         tags: [],
         comments: '',
+        creator: '',
+        creatorURL: '',
+        description: '',
       });
     }
 

@@ -83,7 +83,7 @@ const dbConfig: DBVersioningConfig[] = [
     upgrade: (tx: Transaction): void => {
       tx.table('files')
         .toCollection()
-        .modify((file: FileDTO) => {
+        .modify(async (file: FileDTO) => {
           try {
             // apparently you can't do async stuff here, even though it is typed to return a PromiseLike :/
             const stats = fse.statSync(file.absolutePath);

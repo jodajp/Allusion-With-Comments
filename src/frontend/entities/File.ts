@@ -57,6 +57,11 @@ export class ClientFile {
 
   @observable comments: string;
 
+  /** Metadata */
+  @observable creator: string;
+  @observable creatorURL: string;
+  @observable description: string;
+
   /** Same as "name", but without extension */
   readonly filename: string;
 
@@ -93,6 +98,11 @@ export class ClientFile {
     /** Comments */
     this.comments = fileProps.comments;
 
+    /* Extra metadata */
+    this.creator = fileProps.creator;
+    this.creatorURL = fileProps.creatorURL;
+    this.description = fileProps.description;
+
     // observe all changes to observable fields
     this.saveHandler = reaction(
       // We need to explicitly define which values this reaction should react to
@@ -112,6 +122,17 @@ export class ClientFile {
 
   @action.bound setComment(comment: string): void {
     this.comments = comment;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  @action.bound setExtraMetada(data: any): void {
+    this.creator = data.Artist;
+    this.creatorURL = data.CreatorWorkURL;
+    this.description = data.description;
+
+    console.log(
+      `Final: creator: ${this.creator}, creatorURL: ${this.creatorURL}, description: ${this.description}`,
+    );
   }
 
   @action.bound setThumbnailPath(thumbnailPath: string): void {
@@ -176,6 +197,9 @@ export class ClientFile {
       name: this.name,
       extension: this.extension,
       comments: this.comments,
+      creator: this.creator,
+      creatorURL: this.creatorURL,
+      description: this.description,
     };
   }
 
@@ -198,6 +222,24 @@ export async function getMetaData(stats: FileStats, imageLoader: ImageLoader): P
     width: dimensions.width,
     height: dimensions.height,
     dateCreated: stats.dateCreated,
+  };
+}
+
+/** This basically is a function that fetches stuff related to metadata (Exif tags) */
+export async function getMetaDataExtra(stats: FileStats, imageLoader: ImageLoader): Promise<any> {
+  const path = stats.absolutePath;
+  const metadata = await imageLoader.getAllMetadaObject(path);
+
+  console.log({
+    creator: metadata.Artist,
+    creatorURL: metadata.CreatorWorkURL,
+    description: metadata.description,
+  });
+
+  return {
+    creator: metadata.Artist,
+    creatorURL: metadata.CreatorWorkURL,
+    description: metadata.description,
   };
 }
 

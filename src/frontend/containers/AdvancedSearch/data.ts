@@ -22,7 +22,11 @@ export type Criteria =
   | Field<'extension', BinaryOperatorType, string>
   | Field<'size', NumberOperatorType, number>
   | Field<'width' | 'height', NumberOperatorType, number>
-  | Field<'dateAdded', NumberOperatorType, Date>;
+  | Field<'dateAdded', NumberOperatorType, Date>
+  | Field<'comments', StringOperatorType, string>
+  | Field<'creator', StringOperatorType, string>
+  | Field<'creatorURL', StringOperatorType, string>
+  | Field<'description', StringOperatorType, string>;
 
 interface Field<K extends Key, O extends Operator, V extends Value> {
   key: K;
@@ -32,14 +36,33 @@ interface Field<K extends Key, O extends Operator, V extends Value> {
 
 export type Key = keyof Pick<
   FileDTO,
-  'name' | 'absolutePath' | 'tags' | 'extension' | 'size' | 'width' | 'height' | 'dateAdded'
+  | 'name'
+  | 'absolutePath'
+  | 'tags'
+  | 'extension'
+  | 'size'
+  | 'width'
+  | 'height'
+  | 'dateAdded'
+  | 'comments'
+  | 'creator'
+  | 'creatorURL'
+  | 'description'
 >;
+
 export type Operator = OperatorType;
 export type Value = string | number | Date | TagValue;
 export type TagValue = ID | undefined;
 
 export function defaultQuery(key: Key): Criteria {
-  if (key === 'name' || key === 'absolutePath') {
+  if (
+    key === 'name' ||
+    key === 'absolutePath' ||
+    key === 'comments' ||
+    key === 'creator' ||
+    key === 'creatorURL' ||
+    key === 'description'
+  ) {
     return { key, operator: 'contains', value: '' };
   } else if (key === 'tags') {
     return { key, operator: 'contains', value: undefined };
@@ -67,7 +90,13 @@ export function fromCriteria(criteria: ClientFileSearchCriteria): [ID, Criteria]
   // Preserve the value when the criteria has the same type of value
   if (
     criteria instanceof ClientStringSearchCriteria &&
-    (criteria.key === 'name' || criteria.key === 'absolutePath' || criteria.key === 'extension')
+    (criteria.key === 'name' ||
+      criteria.key === 'absolutePath' ||
+      criteria.key === 'extension' ||
+      criteria.key === 'comments' ||
+      criteria.key === 'creator' ||
+      criteria.key === 'creatorURL' ||
+      criteria.key === 'description')
   ) {
     query.value = criteria.value;
   } else if (criteria instanceof ClientDateSearchCriteria && criteria.key === 'dateAdded') {
@@ -91,7 +120,15 @@ export function fromCriteria(criteria: ClientFileSearchCriteria): [ID, Criteria]
 }
 
 export function intoCriteria(query: Criteria, tagStore: TagStore): ClientFileSearchCriteria {
-  if (query.key === 'name' || query.key === 'absolutePath' || query.key === 'extension') {
+  if (
+    query.key === 'name' ||
+    query.key === 'absolutePath' ||
+    query.key === 'extension' ||
+    query.key === 'comments' ||
+    query.key === 'creator' ||
+    query.key === 'creatorURL' ||
+    query.key === 'description'
+  ) {
     return new ClientStringSearchCriteria(query.key, query.value, query.operator);
   } else if (query.key === 'dateAdded') {
     return new ClientDateSearchCriteria(query.key, query.value, query.operator);

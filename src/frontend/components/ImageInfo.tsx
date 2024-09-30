@@ -141,6 +141,9 @@ const ImageInfo = ({ file }: ImageInfoProps) => {
       exifTool
         .writeData(file.absolutePath, data)
         .then(() => AppToaster.show({ message: 'Image file saved!', timeout: 3000 }))
+        .then(() => {
+          file.setExtraMetada(data);
+        })
         .catch((err) => {
           AppToaster.show({
             message: 'Could not save image file',
@@ -150,7 +153,7 @@ const ImageInfo = ({ file }: ImageInfoProps) => {
           console.error('Could not update file', err);
         });
     },
-    [exifStats, exifTool, file.absolutePath],
+    [exifStats, exifTool, file],
   );
 
   // Todo: Would be nice to also add tooltips explaining what these mean (e.g. diff between dimensions & resolution)

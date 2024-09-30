@@ -225,6 +225,16 @@ class ImageLoader {
       }, 60_000),
     );
   }
+
+  async getAllMetadaObject(absolutePath: string): Promise<any> {
+    const result = await this.exifIO.readExifTags(absolutePath, [
+      'Artist',
+      'CreatorWorkURL',
+      'ImageDescription',
+    ]);
+
+    return { Artist: result[0], CreatorWorkURL: result[1], ImageDescription: result[2] };
+  }
 }
 
 export default ImageLoader;
