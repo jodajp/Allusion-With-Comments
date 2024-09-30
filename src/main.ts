@@ -481,6 +481,7 @@ autoUpdater.on('error', (error) => {
   hasCheckedForUpdateOnStartup = true;
 });
 
+//
 autoUpdater.on('update-available', async (info: UpdateInfo) => {
   if (mainWindow === null || mainWindow.isDestroyed()) {
     return;
@@ -861,5 +862,6 @@ async function getTags(): Promise<TagDTO[]> {
     const { tags } = await MainMessenger.getTags(mainWindow.webContents);
     return tags.filter((t) => t.id !== ROOT_TAG_ID);
   }
+
   return [];
 }
