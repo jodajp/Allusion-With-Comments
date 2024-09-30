@@ -481,7 +481,6 @@ autoUpdater.on('error', (error) => {
   hasCheckedForUpdateOnStartup = true;
 });
 
-//
 autoUpdater.on('update-available', async (info: UpdateInfo) => {
   if (mainWindow === null || mainWindow.isDestroyed()) {
     return;
